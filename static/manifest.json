@@ -1,0 +1,11 @@
+{
+  "name": "Köyümüz",
+  "short_name": "Köyümüz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f3",
+  "theme_color": "#2f6b4f",
+  "icons": [
+    { "src": "/static/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
