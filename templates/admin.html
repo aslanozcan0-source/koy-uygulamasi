@@ -524,7 +524,6 @@ function sekmeDegistir(sekme) {
   document.getElementById('liste-baslik').textContent = sekmeBasliklari[sekme];
   document.getElementById('form-panel').style.display = sekme === 'uye' ? 'none' : 'block';
   document.getElementById('ana-grid').classList.toggle('tek', sekme === 'uye');
-  document.getElementById('liste-tablo').style.display = (sekme === 'foto') ? 'none' : 'table';
   duyuruFormuSifirla();
   etkinlikFormuSifirla();
   kisiFormuSifirla();
