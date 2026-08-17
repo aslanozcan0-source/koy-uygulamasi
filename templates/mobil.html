@@ -22,8 +22,9 @@
     --text: #23291f;
     --muted: #6b7268;
     --border: #e4e8e0;
+    --danger: #c0473a;
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -44,6 +45,9 @@
     padding: 28px 20px 20px;
     border-bottom-left-radius: 22px;
     border-bottom-right-radius: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
   }
   header h1 {
     margin: 0 0 4px;
@@ -55,30 +59,40 @@
     opacity: 0.85;
     font-size: 13px;
   }
+  header button.cikis {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+    font-size: 11.5px;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
   .tabs {
     display: flex;
-    margin: -18px 16px 0;
+    margin: -18px 12px 0;
     background: var(--card);
     border-radius: 14px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-    overflow: hidden;
     z-index: 2;
     position: relative;
+    overflow-x: auto;
   }
   .tab {
-    flex: 1;
+    flex: 0 0 auto;
     text-align: center;
-    padding: 13px 8px;
-    font-size: 14px;
+    padding: 13px 14px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--muted);
     cursor: pointer;
     border: none;
     background: transparent;
+    white-space: nowrap;
   }
   .tab.active {
     color: white;
     background: var(--primary);
+    border-radius: 10px;
   }
   main {
     padding: 24px 16px 40px;
@@ -127,6 +141,7 @@
     color: var(--muted);
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
   }
   .empty {
     text-align: center;
@@ -140,30 +155,272 @@
     padding: 30px;
     font-size: 13px;
   }
+
+  /* Fotoğraf albümü */
+  .foto-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .foto-kutu {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .foto-kutu img { width: 100%; height: 130px; object-fit: cover; display: block; }
+  .foto-kutu .foto-alt { padding: 8px 10px; font-size: 12px; font-weight: 600; }
+  #lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #lightbox img { max-width: 100%; max-height: 75vh; border-radius: 10px; }
+  #lightbox .lb-alt { color: white; text-align: center; margin-top: 12px; font-size: 13.5px; }
+  #lightbox .lb-kapat { position: absolute; top: 18px; right: 18px; color: white; font-size: 26px; background: none; border: none; }
+
+  /* Anılar (kişiler) */
+  .kisi-filtre { display: flex; gap: 8px; margin-bottom: 14px; }
+  .kisi-filtre button {
+    flex: 1;
+    padding: 9px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .kisi-filtre button.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .kisi-card { display: flex; gap: 12px; }
+  .kisi-card img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: var(--bg); }
+  .kisi-card .kisi-resimsiz { width: 64px; height: 64px; border-radius: 50%; background: var(--bg); flex-shrink: 0; display:flex; align-items:center; justify-content:center; font-size: 22px; }
+  .kisi-yillar { font-size: 12px; color: var(--muted); margin: 2px 0 6px; }
+
+  /* Dernek */
+  .dernek-baslik { font-size: 14px; font-weight: 700; margin: 6px 0 10px; }
+  .ozet-satir { display: flex; justify-content: space-between; font-size: 13.5px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .ozet-satir:last-child { border-bottom: none; }
+  .ozet-toplam { display: flex; justify-content: space-between; font-weight: 700; font-size: 15px; padding: 12px 0 0; margin-top: 6px; }
+
+  /* Videolar */
+  .video-card a { color: var(--primary-dark); font-weight: 700; text-decoration: none; font-size: 14px; }
+  .video-card .video-buton { display: inline-block; margin-top: 10px; background: var(--primary); color: white; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 600; text-decoration: none; }
+
+  /* Giriş / Üye ol */
+  #giris-ekrani {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  #giris-kutu {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 30px 24px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  #giris-kutu h1 { text-align: center; font-size: 22px; margin: 0 0 4px; }
+  #giris-kutu p.alt { text-align: center; color: var(--muted); font-size: 13px; margin: 0 0 22px; }
+  #giris-kutu label { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); margin: 12px 0 5px; }
+  #giris-kutu input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    font-size: 14px;
+    background: #fafbf9;
+  }
+  #giris-kutu button.primary {
+    margin-top: 18px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 9px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 14.5px;
+  }
+  #giris-kutu .degistir {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  #giris-kutu .degistir a { color: var(--primary-dark); font-weight: 600; text-decoration: none; }
+  #giris-msg { text-align: center; font-size: 12.5px; margin-top: 10px; min-height: 16px; }
+  #giris-msg.err { color: var(--danger); }
+  #giris-msg.ok { color: var(--primary-dark); }
+  #govde { display: none; }
 </style>
 </head>
 <body>
+
+<div id="giris-ekrani">
+  <div id="giris-kutu">
+    <h1>🏡 Köyümüz</h1>
+    <p class="alt">Sadece köylülerimiz için</p>
+
+    <form id="giris-form">
+      <label>E-posta veya Telefon</label>
+      <input type="text" id="g-kimlik" required>
+      <label>Şifre</label>
+      <input type="password" id="g-sifre" required>
+      <button type="submit" class="primary">Giriş Yap</button>
+    </form>
+
+    <form id="kayit-form" style="display:none;">
+      <label>Ad Soyad</label>
+      <input type="text" id="k-ad" required>
+      <label>E-posta (veya telefon alanını doldurun)</label>
+      <input type="text" id="k-email">
+      <label>Telefon (veya e-posta alanını doldurun)</label>
+      <input type="text" id="k-telefon">
+      <label>Şifre</label>
+      <input type="password" id="k-sifre" required>
+      <button type="submit" class="primary">Üyelik Talebi Gönder</button>
+    </form>
+
+    <div class="degistir" id="degistir-giris">Hesabınız yok mu? <a href="#" onclick="formDegistir('kayit'); return false;">Üye Olun</a></div>
+    <div class="degistir" id="degistir-kayit" style="display:none;">Zaten üye misiniz? <a href="#" onclick="formDegistir('giris'); return false;">Giriş Yapın</a></div>
+    <div id="giris-msg"></div>
+  </div>
+</div>
+
+<div id="govde">
 <div class="phone">
   <header>
-    <h1>🏡 Köyümüz</h1>
-    <p>Duyurular ve etkinlikler tek bir yerde</p>
+    <div>
+      <h1>🏡 Köyümüz</h1>
+      <p id="hosgeldin">Hoş geldiniz</p>
+    </div>
+    <button class="cikis" onclick="cikisYap()">Çıkış</button>
   </header>
   <div class="tabs">
     <button class="tab active" id="tab-duyuru" onclick="sekmeDegistir('duyuru')">Duyurular</button>
     <button class="tab" id="tab-etkinlik" onclick="sekmeDegistir('etkinlik')">Etkinlikler</button>
+    <button class="tab" id="tab-foto" onclick="sekmeDegistir('foto')">Fotoğraflar</button>
+    <button class="tab" id="tab-kisi" onclick="sekmeDegistir('kisi')">Anılar</button>
+    <button class="tab" id="tab-dernek" onclick="sekmeDegistir('dernek')">Dernek</button>
+    <button class="tab" id="tab-video" onclick="sekmeDegistir('video')">Videolar</button>
   </div>
   <main>
     <div id="icerik" class="loading">Yükleniyor...</div>
   </main>
 </div>
+</div>
+
+<div id="lightbox" onclick="lightboxKapat()">
+  <button class="lb-kapat" onclick="lightboxKapat()">×</button>
+  <div>
+    <img id="lb-img" src="">
+    <div class="lb-alt" id="lb-alt"></div>
+  </div>
+</div>
 
 <script>
 let aktifSekme = 'duyuru';
+let TOKEN = localStorage.getItem('koy_token') || '';
+let AD_SOYAD = localStorage.getItem('koy_ad_soyad') || '';
+let kisiFiltre = 'rahmetli';
+
+function formDegistir(hangi) {
+  document.getElementById('giris-form').style.display = hangi === 'giris' ? 'block' : 'none';
+  document.getElementById('kayit-form').style.display = hangi === 'kayit' ? 'block' : 'none';
+  document.getElementById('degistir-giris').style.display = hangi === 'giris' ? 'none' : 'block';
+  document.getElementById('degistir-kayit').style.display = hangi === 'kayit' ? 'none' : 'block';
+  document.getElementById('giris-msg').textContent = '';
+}
+
+document.getElementById('giris-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('giris-msg');
+  msg.textContent = ''; msg.className = '';
+  try {
+    const res = await fetch('/api/auth/giris', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ kimlik: document.getElementById('g-kimlik').value.trim(), sifre: document.getElementById('g-sifre').value }),
+    });
+    const veri = await res.json();
+    if (!res.ok) { msg.textContent = veri.hata || 'Giriş başarısız.'; msg.className = 'err'; return; }
+    TOKEN = veri.token;
+    AD_SOYAD = veri.ad_soyad;
+    localStorage.setItem('koy_token', TOKEN);
+    localStorage.setItem('koy_ad_soyad', AD_SOYAD);
+    govdeyiAc();
+  } catch (err) {
+    msg.textContent = 'Bağlantı hatası, tekrar deneyin.';
+    msg.className = 'err';
+  }
+});
+
+document.getElementById('kayit-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('giris-msg');
+  msg.textContent = ''; msg.className = '';
+  try {
+    const res = await fetch('/api/auth/kayit', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        ad_soyad: document.getElementById('k-ad').value.trim(),
+        email: document.getElementById('k-email').value.trim(),
+        telefon: document.getElementById('k-telefon').value.trim(),
+        sifre: document.getElementById('k-sifre').value,
+      }),
+    });
+    const veri = await res.json();
+    if (!res.ok) { msg.textContent = veri.hata || 'Üyelik talebi gönderilemedi.'; msg.className = 'err'; return; }
+    msg.textContent = veri.mesaj || 'Talebiniz alındı, onay bekleniyor.';
+    msg.className = 'ok';
+    document.getElementById('kayit-form').reset();
+    setTimeout(() => formDegistir('giris'), 2500);
+  } catch (err) {
+    msg.textContent = 'Bağlantı hatası, tekrar deneyin.';
+    msg.className = 'err';
+  }
+});
+
+function cikisYap() {
+  localStorage.removeItem('koy_token');
+  localStorage.removeItem('koy_ad_soyad');
+  TOKEN = '';
+  document.getElementById('govde').style.display = 'none';
+  document.getElementById('giris-ekrani').style.display = 'flex';
+}
+
+function govdeyiAc() {
+  document.getElementById('giris-ekrani').style.display = 'none';
+  document.getElementById('govde').style.display = 'block';
+  document.getElementById('hosgeldin').textContent = AD_SOYAD ? `Merhaba, ${AD_SOYAD}` : 'Duyurular ve etkinlikler tek bir yerde';
+  yukle();
+}
+
+if (TOKEN) { govdeyiAc(); }
+
+async function apiFetch(url) {
+  const res = await fetch(url, { headers: { 'X-Auth-Token': TOKEN } });
+  if (res.status === 401) {
+    cikisYap();
+    throw new Error('Yetkisiz');
+  }
+  return res;
+}
 
 function sekmeDegistir(sekme) {
   aktifSekme = sekme;
-  document.getElementById('tab-duyuru').classList.toggle('active', sekme === 'duyuru');
-  document.getElementById('tab-etkinlik').classList.toggle('active', sekme === 'etkinlik');
+  ['duyuru','etkinlik','foto','kisi','dernek','video'].forEach(s => {
+    document.getElementById('tab-' + s).classList.toggle('active', s === sekme);
+  });
   yukle();
 }
 
@@ -176,17 +433,40 @@ function tarihFormatla(tarih) {
   }
 }
 
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str ?? '';
+  return d.innerHTML;
+}
+
+function lightboxAc(src, alt) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-alt').textContent = alt || '';
+  document.getElementById('lightbox').style.display = 'flex';
+}
+function lightboxKapat() {
+  document.getElementById('lightbox').style.display = 'none';
+}
+
+function youtubeGomulu(url) {
+  let id = '';
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtu.be')) id = u.pathname.slice(1);
+    else if (u.searchParams.get('v')) id = u.searchParams.get('v');
+    else if (u.pathname.includes('/embed/')) id = u.pathname.split('/embed/')[1];
+  } catch (e) {}
+  return id;
+}
+
 async function yukle() {
   const icerik = document.getElementById('icerik');
   icerik.innerHTML = '<div class="loading">Yükleniyor...</div>';
   try {
     if (aktifSekme === 'duyuru') {
-      const res = await fetch('/api/duyurular');
+      const res = await apiFetch('/api/duyurular');
       const veriler = await res.json();
-      if (veriler.length === 0) {
-        icerik.innerHTML = '<div class="empty">Henüz duyuru yok.</div>';
-        return;
-      }
+      if (veriler.length === 0) { icerik.innerHTML = '<div class="empty">Henüz duyuru yok.</div>'; return; }
       icerik.innerHTML = veriler.map(d => `
         <div class="card ${d.onemli ? 'onemli' : ''}">
           <div class="card-top">
@@ -195,40 +475,105 @@ async function yukle() {
           </div>
           <p>${escapeHtml(d.icerik)}</p>
           <div class="meta"><span>📅 ${tarihFormatla(d.tarih)}</span></div>
-        </div>
-      `).join('');
-    } else {
-      const res = await fetch('/api/etkinlikler');
+        </div>`).join('');
+
+    } else if (aktifSekme === 'etkinlik') {
+      const res = await apiFetch('/api/etkinlikler');
       const veriler = await res.json();
-      if (veriler.length === 0) {
-        icerik.innerHTML = '<div class="empty">Henüz etkinlik yok.</div>';
-        return;
-      }
+      if (veriler.length === 0) { icerik.innerHTML = '<div class="empty">Henüz etkinlik yok.</div>'; return; }
       icerik.innerHTML = veriler.map(e => `
         <div class="card">
-          <div class="card-top">
-            <h3>${escapeHtml(e.baslik)}</h3>
-          </div>
+          <div class="card-top"><h3>${escapeHtml(e.baslik)}</h3></div>
           <p>${escapeHtml(e.aciklama)}</p>
           <div class="meta">
             <span>📅 ${tarihFormatla(e.tarih)}</span>
             ${e.yer ? `<span>📍 ${escapeHtml(e.yer)}</span>` : ''}
           </div>
-        </div>
-      `).join('');
+        </div>`).join('');
+
+    } else if (aktifSekme === 'foto') {
+      const res = await apiFetch('/api/fotograflar');
+      const veriler = await res.json();
+      if (veriler.length === 0) { icerik.innerHTML = '<div class="empty">Henüz fotoğraf eklenmedi.</div>'; return; }
+      icerik.innerHTML = '<div class="foto-grid">' + veriler.map(f => `
+        <div class="foto-kutu" onclick='lightboxAc(${JSON.stringify(f.resim)}, ${JSON.stringify(f.baslik || "")})'>
+          <img src="${f.resim}" alt="${escapeHtml(f.baslik || '')}">
+          ${f.baslik ? `<div class="foto-alt">${escapeHtml(f.baslik)}</div>` : ''}
+        </div>`).join('') + '</div>';
+
+    } else if (aktifSekme === 'kisi') {
+      const res = await apiFetch('/api/kisiler?tur=' + kisiFiltre);
+      const veriler = await res.json();
+      let html = `
+        <div class="kisi-filtre">
+          <button class="${kisiFiltre === 'rahmetli' ? 'active' : ''}" onclick="kisiFiltreDegistir('rahmetli')">🕊️ Rahmetliler</button>
+          <button class="${kisiFiltre === 'yasli' ? 'active' : ''}" onclick="kisiFiltreDegistir('yasli')">🌿 Yaşlılarımız</button>
+        </div>`;
+      if (veriler.length === 0) {
+        html += `<div class="empty">Bu bölümde henüz kimse eklenmedi.</div>`;
+      } else {
+        html += veriler.map(k => `
+          <div class="card kisi-card">
+            ${k.resim ? `<img src="${k.resim}" alt="${escapeHtml(k.ad_soyad)}">` : `<div class="kisi-resimsiz">👤</div>`}
+            <div>
+              <h3>${escapeHtml(k.ad_soyad)}</h3>
+              <div class="kisi-yillar">${k.tur === 'rahmetli' ? (escapeHtml(k.dogum_yili || '?') + ' - ' + escapeHtml(k.vefat_yili || '?')) : (k.dogum_yili ? escapeHtml(k.dogum_yili) + ' doğumlu' : '')}</div>
+              ${k.aciklama ? `<p>${escapeHtml(k.aciklama)}</p>` : ''}
+            </div>
+          </div>`).join('');
+      }
+      icerik.innerHTML = html;
+
+    } else if (aktifSekme === 'dernek') {
+      const [destekRes, harcamaRes] = await Promise.all([apiFetch('/api/destekciler'), apiFetch('/api/harcamalar')]);
+      const destekciler = await destekRes.json();
+      const harcamalar = await harcamaRes.json();
+      const toplam = harcamalar.reduce((t, h) => t + parseFloat(h.tutar || 0), 0);
+      let html = '<div class="card"><div class="dernek-baslik">🤝 Destekçilerimiz</div>';
+      if (destekciler.length === 0) {
+        html += '<div class="empty" style="padding:10px 0;">Henüz destekçi eklenmedi.</div>';
+      } else {
+        html += destekciler.map(d => `
+          <div class="ozet-satir"><span><b>${escapeHtml(d.ad_soyad)}</b>${d.aciklama ? ' — ' + escapeHtml(d.aciklama) : ''}</span><span style="color:var(--muted); font-size:11.5px;">${d.tarih}</span></div>`).join('');
+      }
+      html += '</div><div class="card"><div class="dernek-baslik">💰 Harcamalarımız</div>';
+      if (harcamalar.length === 0) {
+        html += '<div class="empty" style="padding:10px 0;">Henüz harcama kaydı yok.</div>';
+      } else {
+        html += harcamalar.map(h => `
+          <div class="ozet-satir"><span><b>${escapeHtml(h.baslik)}</b>${h.aciklama ? ' — ' + escapeHtml(h.aciklama) : ''}<br><span style="color:var(--muted); font-size:11.5px;">${h.tarih}</span></span><span>${parseFloat(h.tutar).toLocaleString('tr-TR', {minimumFractionDigits:2})} TL</span></div>`).join('');
+        html += `<div class="ozet-toplam"><span>Toplam</span><span>${toplam.toLocaleString('tr-TR', {minimumFractionDigits:2})} TL</span></div>`;
+      }
+      html += '</div>';
+      icerik.innerHTML = html;
+
+    } else if (aktifSekme === 'video') {
+      const res = await apiFetch('/api/videolar');
+      const veriler = await res.json();
+      if (veriler.length === 0) { icerik.innerHTML = '<div class="empty">Henüz video eklenmedi.</div>'; return; }
+      icerik.innerHTML = veriler.map(v => {
+        const ytId = youtubeGomulu(v.url);
+        return `
+        <div class="card video-card">
+          <h3>${escapeHtml(v.baslik)}</h3>
+          ${v.aciklama ? `<p>${escapeHtml(v.aciklama)}</p>` : ''}
+          ${ytId ? `<div style="margin-top:10px; border-radius:10px; overflow:hidden;"><a href="${v.url}" target="_blank" rel="noopener"><img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" style="width:100%; display:block;"></a></div>` : ''}
+          <a class="video-buton" href="${v.url}" target="_blank" rel="noopener">▶ YouTube'da İzle</a>
+          <div class="meta" style="margin-top:8px;"><span>📅 ${tarihFormatla(v.tarih)}</span></div>
+        </div>`;
+      }).join('');
     }
   } catch (err) {
-    icerik.innerHTML = '<div class="empty">Yüklenirken bir hata oluştu.</div>';
+    if (err.message !== 'Yetkisiz') {
+      icerik.innerHTML = '<div class="empty">Yüklenirken bir hata oluştu.</div>';
+    }
   }
 }
 
-function escapeHtml(str) {
-  const d = document.createElement('div');
-  d.textContent = str ?? '';
-  return d.innerHTML;
+function kisiFiltreDegistir(tur) {
+  kisiFiltre = tur;
+  yukle();
 }
-
-yukle();
 </script>
 </body>
 </html>

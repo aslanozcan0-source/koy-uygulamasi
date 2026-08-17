@@ -27,11 +27,25 @@
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     padding: 22px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
   }
   header h1 { margin: 0; font-size: 20px; }
   header p { margin: 4px 0 0; opacity: 0.85; font-size: 13px; }
+  header button {
+    border: 1px solid rgba(255,255,255,0.5);
+    background: transparent;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
   .wrap {
-    max-width: 1100px;
+    max-width: 1150px;
     margin: 0 auto;
     padding: 28px 24px 60px;
   }
@@ -39,27 +53,39 @@
     display: flex;
     gap: 8px;
     margin-bottom: 20px;
+    flex-wrap: wrap;
   }
   .tab {
-    padding: 10px 18px;
+    padding: 10px 16px;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--card);
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--muted);
     cursor: pointer;
+    position: relative;
   }
   .tab.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
   }
+  .tab .say {
+    display: inline-block;
+    margin-left: 6px;
+    background: var(--accent);
+    color: white;
+    font-size: 10.5px;
+    padding: 1px 6px;
+    border-radius: 20px;
+  }
   .grid {
     display: grid;
     grid-template-columns: 340px 1fr;
     gap: 20px;
   }
+  .grid.tek { grid-template-columns: 1fr; }
   @media (max-width: 800px) {
     .grid { grid-template-columns: 1fr; }
   }
@@ -73,6 +99,13 @@
     margin: 0 0 14px;
     font-size: 15px;
   }
+  .panel h3 {
+    margin: 22px 0 12px;
+    font-size: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .panel h3:first-of-type { border-top: none; padding-top: 0; margin-top: 4px; }
   label {
     display: block;
     font-size: 12.5px;
@@ -80,7 +113,7 @@
     color: var(--muted);
     margin: 12px 0 5px;
   }
-  input, textarea {
+  input, textarea, select {
     width: 100%;
     padding: 9px 11px;
     border: 1px solid var(--border);
@@ -90,6 +123,7 @@
     background: #fafbf9;
   }
   textarea { resize: vertical; min-height: 70px; }
+  input[type="file"] { padding: 6px; background: transparent; }
   .checkbox-row {
     display: flex;
     align-items: center;
@@ -145,97 +179,355 @@
   }
   td.actions button.edit { color: var(--primary-dark); }
   td.actions button.del { color: var(--danger); }
+  td.actions button.onay { color: var(--primary-dark); }
+  td.actions button.red { color: var(--danger); }
   td.actions button:hover { background: var(--bg); }
-  .badge-onemli {
+  .badge-onemli, .badge-bekliyor, .badge-onaylandi, .badge-reddedildi, .badge-rahmetli, .badge-yasli {
     font-size: 10.5px;
     font-weight: 700;
-    color: var(--accent);
-    background: #fbeedd;
     padding: 2px 7px;
     border-radius: 20px;
+    white-space: nowrap;
   }
+  .badge-onemli { color: var(--accent); background: #fbeedd; }
+  .badge-bekliyor { color: var(--accent); background: #fbeedd; }
+  .badge-onaylandi { color: var(--primary-dark); background: #e3efe8; }
+  .badge-reddedildi { color: var(--danger); background: #f7e3e0; }
+  .badge-rahmetli { color: var(--muted); background: #eceee9; }
+  .badge-yasli { color: var(--primary-dark); background: #e3efe8; }
   .empty-row td { text-align: center; color: var(--muted); padding: 24px; }
   .msg { font-size: 12.5px; margin-top: 8px; min-height: 16px; }
   .msg.err { color: var(--danger); }
   .msg.ok { color: var(--primary-dark); }
+  .onizleme { margin-top: 10px; max-width: 100%; max-height: 160px; border-radius: 8px; display: none; }
+  .foto-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .foto-kutu {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .foto-kutu img { width: 100%; height: 110px; object-fit: cover; display: block; }
+  .foto-kutu .foto-alt { padding: 8px; font-size: 12px; }
+  .foto-kutu .foto-alt b { display: block; font-size: 12.5px; margin-bottom: 4px; }
+  .foto-kutu .foto-alt button { width: 100%; margin-top: 6px; }
+  .ozet-satir {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding: 6px 0;
+  }
+  .ozet-toplam {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 10px 0 0;
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Giriş ekranı */
+  #giris-ekrani {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #giris-kutu {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+  }
+  #giris-kutu h1 { font-size: 20px; margin: 0 0 6px; }
+  #giris-kutu p { font-size: 13px; color: var(--muted); margin: 0 0 18px; }
+  #panel-govde { display: none; }
 </style>
 </head>
 <body>
+
+<div id="giris-ekrani">
+  <div id="giris-kutu">
+    <h1>🏡 Köyümüz</h1>
+    <p>Yönetim paneline erişmek için şifrenizi girin</p>
+    <input type="password" id="admin-sifre-input" placeholder="Yönetici şifresi" autocomplete="current-password">
+    <button class="primary" onclick="adminGirisYap()">Giriş Yap</button>
+    <div class="msg err" id="giris-msg"></div>
+  </div>
+</div>
+
+<div id="panel-govde">
 <header>
-  <h1>🏡 Köyümüz — Yönetim Paneli</h1>
-  <p>Duyuru ve etkinlikleri buradan ekleyip düzenleyebilirsiniz</p>
+  <div>
+    <h1>🏡 Köyümüz — Yönetim Paneli</h1>
+    <p>Tüm içerikleri buradan ekleyip düzenleyebilirsiniz</p>
+  </div>
+  <button onclick="cikisYap()">Çıkış Yap</button>
 </header>
 
 <div class="wrap">
   <div class="tabs">
     <button class="tab active" id="tab-duyuru" onclick="sekmeDegistir('duyuru')">📢 Duyurular</button>
     <button class="tab" id="tab-etkinlik" onclick="sekmeDegistir('etkinlik')">📅 Etkinlikler</button>
+    <button class="tab" id="tab-uye" onclick="sekmeDegistir('uye')">👥 Üyeler<span class="say" id="bekleyen-sayisi" style="display:none;"></span></button>
+    <button class="tab" id="tab-foto" onclick="sekmeDegistir('foto')">🖼️ Fotoğraflar</button>
+    <button class="tab" id="tab-kisi" onclick="sekmeDegistir('kisi')">🕊️ Anılar</button>
+    <button class="tab" id="tab-dernek" onclick="sekmeDegistir('dernek')">🤝 Dernek</button>
+    <button class="tab" id="tab-video" onclick="sekmeDegistir('video')">🎬 Videolar</button>
   </div>
 
-  <div class="grid">
-    <div class="panel">
-      <h2 id="form-baslik">Yeni Duyuru Ekle</h2>
-      <form id="duyuru-form">
-        <label>Başlık</label>
-        <input type="text" id="d-baslik" required>
-        <label>İçerik</label>
-        <textarea id="d-icerik" required></textarea>
-        <label>Tarih</label>
-        <input type="date" id="d-tarih" required>
-        <div class="checkbox-row">
-          <input type="checkbox" id="d-onemli">
-          <label style="margin:0;">Önemli olarak işaretle</label>
-        </div>
-        <button type="submit" class="primary" id="d-submit">Ekle</button>
-        <button type="button" class="secondary" id="d-cancel" style="display:none;" onclick="duyuruFormuSifirla()">Vazgeç</button>
-        <div class="msg" id="d-msg"></div>
-      </form>
+  <div class="grid" id="ana-grid">
+    <div class="panel" id="form-panel">
 
-      <form id="etkinlik-form" style="display:none;">
-        <label>Başlık</label>
-        <input type="text" id="e-baslik" required>
-        <label>Açıklama</label>
-        <textarea id="e-aciklama" required></textarea>
-        <label>Tarih</label>
-        <input type="date" id="e-tarih" required>
-        <label>Yer (opsiyonel)</label>
-        <input type="text" id="e-yer">
-        <button type="submit" class="primary" id="e-submit">Ekle</button>
-        <button type="button" class="secondary" id="e-cancel" style="display:none;" onclick="etkinlikFormuSifirla()">Vazgeç</button>
-        <div class="msg" id="e-msg"></div>
-      </form>
+      <!-- Duyuru formu -->
+      <div id="panel-duyuru">
+        <h2>Yeni Duyuru Ekle</h2>
+        <form id="duyuru-form">
+          <label>Başlık</label>
+          <input type="text" id="d-baslik" required>
+          <label>İçerik</label>
+          <textarea id="d-icerik" required></textarea>
+          <label>Tarih</label>
+          <input type="date" id="d-tarih" required>
+          <div class="checkbox-row">
+            <input type="checkbox" id="d-onemli">
+            <label style="margin:0;">Önemli olarak işaretle</label>
+          </div>
+          <button type="submit" class="primary" id="d-submit">Ekle</button>
+          <button type="button" class="secondary" id="d-cancel" style="display:none;" onclick="duyuruFormuSifirla()">Vazgeç</button>
+          <div class="msg" id="d-msg"></div>
+        </form>
+      </div>
+
+      <!-- Etkinlik formu -->
+      <div id="panel-etkinlik" style="display:none;">
+        <h2>Yeni Etkinlik Ekle</h2>
+        <form id="etkinlik-form">
+          <label>Başlık</label>
+          <input type="text" id="e-baslik" required>
+          <label>Açıklama</label>
+          <textarea id="e-aciklama" required></textarea>
+          <label>Tarih</label>
+          <input type="date" id="e-tarih" required>
+          <label>Yer (opsiyonel)</label>
+          <input type="text" id="e-yer">
+          <button type="submit" class="primary" id="e-submit">Ekle</button>
+          <button type="button" class="secondary" id="e-cancel" style="display:none;" onclick="etkinlikFormuSifirla()">Vazgeç</button>
+          <div class="msg" id="e-msg"></div>
+        </form>
+      </div>
+
+      <!-- Üyeler: form yok, sadece bilgi -->
+      <div id="panel-uye" style="display:none;">
+        <h2>Üyelik Talepleri</h2>
+        <p style="font-size:13px; color:var(--muted); line-height:1.6;">
+          Köylüler mobil uygulama veya web sayfası üzerinden ad soyad, e-posta/telefon ve şifre ile üyelik talebinde bulunur.
+          Talepleri buradan onaylayabilir veya reddedebilirsiniz. Onaylanan üyeler uygulamanın tüm içeriğine giriş yapabilir.
+        </p>
+      </div>
+
+      <!-- Fotoğraf formu -->
+      <div id="panel-foto" style="display:none;">
+        <h2>Yeni Fotoğraf Ekle</h2>
+        <form id="foto-form">
+          <label>Başlık (opsiyonel)</label>
+          <input type="text" id="f-baslik">
+          <label>Açıklama (opsiyonel)</label>
+          <textarea id="f-aciklama"></textarea>
+          <label>Fotoğraf</label>
+          <input type="file" id="f-dosya" accept="image/*" required>
+          <img id="f-onizleme" class="onizleme">
+          <button type="submit" class="primary" id="f-submit">Yükle</button>
+          <div class="msg" id="f-msg"></div>
+        </form>
+      </div>
+
+      <!-- Kişi (rahmetli/yaşlı) formu -->
+      <div id="panel-kisi" style="display:none;">
+        <h2 id="k-form-baslik">Yeni Kişi Ekle</h2>
+        <form id="kisi-form">
+          <label>Ad Soyad</label>
+          <input type="text" id="k-ad" required>
+          <label>Tür</label>
+          <select id="k-tur">
+            <option value="rahmetli">Rahmetli</option>
+            <option value="yasli">Yaşlımız</option>
+          </select>
+          <label>Doğum Yılı (opsiyonel)</label>
+          <input type="text" id="k-dogum" placeholder="örn. 1945">
+          <label id="k-vefat-label">Vefat Yılı (opsiyonel)</label>
+          <input type="text" id="k-vefat" placeholder="örn. 2020">
+          <label>Anı / Açıklama</label>
+          <textarea id="k-aciklama"></textarea>
+          <label>Fotoğraf (opsiyonel)</label>
+          <input type="file" id="k-dosya" accept="image/*">
+          <img id="k-onizleme" class="onizleme">
+          <button type="submit" class="primary" id="k-submit">Ekle</button>
+          <button type="button" class="secondary" id="k-cancel" style="display:none;" onclick="kisiFormuSifirla()">Vazgeç</button>
+          <div class="msg" id="k-msg"></div>
+        </form>
+      </div>
+
+      <!-- Dernek: destekçi + harcama formları -->
+      <div id="panel-dernek" style="display:none;">
+        <h3>Yeni Destekçi Ekle</h3>
+        <form id="destekci-form">
+          <label>Ad Soyad</label>
+          <input type="text" id="ds-ad" required>
+          <label>Açıklama (opsiyonel)</label>
+          <textarea id="ds-aciklama" placeholder="örn. Cami tadilatına destek verdi"></textarea>
+          <label>Tarih</label>
+          <input type="date" id="ds-tarih" required>
+          <button type="submit" class="primary" id="ds-submit">Ekle</button>
+          <div class="msg" id="ds-msg"></div>
+        </form>
+        <h3>Yeni Harcama Ekle</h3>
+        <form id="harcama-form">
+          <label>Başlık</label>
+          <input type="text" id="h-baslik" required>
+          <label>Açıklama (opsiyonel)</label>
+          <textarea id="h-aciklama"></textarea>
+          <label>Tutar (TL)</label>
+          <input type="number" id="h-tutar" step="0.01" required>
+          <label>Tarih</label>
+          <input type="date" id="h-tarih" required>
+          <button type="submit" class="primary" id="h-submit">Ekle</button>
+          <div class="msg" id="h-msg"></div>
+        </form>
+      </div>
+
+      <!-- Video formu -->
+      <div id="panel-video" style="display:none;">
+        <h2>Yeni Video Linki Ekle</h2>
+        <form id="video-form">
+          <label>Başlık</label>
+          <input type="text" id="v-baslik" required>
+          <label>Açıklama (opsiyonel)</label>
+          <textarea id="v-aciklama"></textarea>
+          <label>YouTube Linki</label>
+          <input type="url" id="v-url" placeholder="https://youtube.com/watch?v=..." required>
+          <label>Tarih</label>
+          <input type="date" id="v-tarih" required>
+          <button type="submit" class="primary" id="v-submit">Ekle</button>
+          <div class="msg" id="v-msg"></div>
+        </form>
+      </div>
+
     </div>
 
-    <div class="panel">
+    <div class="panel" id="liste-panel">
       <h2 id="liste-baslik">Duyuru Listesi</h2>
-      <table>
-        <thead id="tablo-head"></thead>
-        <tbody id="tablo-govde">
-          <tr class="empty-row"><td colspan="4">Yükleniyor...</td></tr>
-        </tbody>
-      </table>
+      <div id="liste-icerik">
+        <table id="liste-tablo">
+          <thead id="tablo-head"></thead>
+          <tbody id="tablo-govde">
+            <tr class="empty-row"><td colspan="4">Yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
+</div>
 </div>
 
 <script>
 let aktifSekme = 'duyuru';
 let duzenlenenId = null;
+let ADMIN_SIFRE = localStorage.getItem('koy_admin_sifre') || '';
 
 document.getElementById('d-tarih').valueAsDate = new Date();
 document.getElementById('e-tarih').valueAsDate = new Date();
+document.getElementById('ds-tarih').valueAsDate = new Date();
+document.getElementById('h-tarih').valueAsDate = new Date();
+document.getElementById('v-tarih').valueAsDate = new Date();
+
+// ---------- Giriş ----------
+
+async function adminGirisYap() {
+  const sifre = document.getElementById('admin-sifre-input').value;
+  const msg = document.getElementById('giris-msg');
+  msg.textContent = '';
+  try {
+    const res = await fetch('/api/admin/giris', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({sifre}) });
+    if (!res.ok) {
+      msg.textContent = 'Şifre hatalı.';
+      return;
+    }
+    ADMIN_SIFRE = sifre;
+    localStorage.setItem('koy_admin_sifre', sifre);
+    panelAc();
+  } catch (err) {
+    msg.textContent = 'Bağlantı hatası, tekrar deneyin.';
+  }
+}
+
+document.getElementById('admin-sifre-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') adminGirisYap();
+});
+
+function cikisYap() {
+  localStorage.removeItem('koy_admin_sifre');
+  ADMIN_SIFRE = '';
+  document.getElementById('panel-govde').style.display = 'none';
+  document.getElementById('giris-ekrani').style.display = 'flex';
+}
+
+function panelAc() {
+  document.getElementById('giris-ekrani').style.display = 'none';
+  document.getElementById('panel-govde').style.display = 'block';
+  listeYukle();
+  bekleyenSayisiGuncelle();
+}
+
+async function apiFetch(url, opts = {}) {
+  opts.headers = Object.assign({}, opts.headers, { 'X-Admin-Sifre': ADMIN_SIFRE });
+  const res = await fetch(url, opts);
+  if (res.status === 401) {
+    cikisYap();
+    throw new Error('Yetkisiz');
+  }
+  return res;
+}
+
+if (ADMIN_SIFRE) {
+  panelAc();
+}
+
+// ---------- Sekmeler ----------
+
+const sekmeBasliklari = {
+  duyuru: 'Duyuru Listesi',
+  etkinlik: 'Etkinlik Listesi',
+  uye: 'Üyelik Talepleri',
+  foto: 'Fotoğraf Albümü',
+  kisi: 'Rahmetliler ve Yaşlılarımız',
+  dernek: 'Destekçiler ve Harcamalar',
+  video: 'Video Linkleri',
+};
 
 function sekmeDegistir(sekme) {
   aktifSekme = sekme;
   duzenlenenId = null;
-  document.getElementById('tab-duyuru').classList.toggle('active', sekme === 'duyuru');
-  document.getElementById('tab-etkinlik').classList.toggle('active', sekme === 'etkinlik');
-  document.getElementById('duyuru-form').style.display = sekme === 'duyuru' ? 'block' : 'none';
-  document.getElementById('etkinlik-form').style.display = sekme === 'etkinlik' ? 'block' : 'none';
-  document.getElementById('form-baslik').textContent = sekme === 'duyuru' ? 'Yeni Duyuru Ekle' : 'Yeni Etkinlik Ekle';
-  document.getElementById('liste-baslik').textContent = sekme === 'duyuru' ? 'Duyuru Listesi' : 'Etkinlik Listesi';
+  ['duyuru','etkinlik','uye','foto','kisi','dernek','video'].forEach(s => {
+    document.getElementById('tab-' + s).classList.toggle('active', s === sekme);
+    document.getElementById('panel-' + s).style.display = s === sekme ? 'block' : 'none';
+  });
+  document.getElementById('liste-baslik').textContent = sekmeBasliklari[sekme];
+  document.getElementById('form-panel').style.display = sekme === 'uye' ? 'none' : 'block';
+  document.getElementById('ana-grid').classList.toggle('tek', sekme === 'uye');
+  document.getElementById('liste-tablo').style.display = (sekme === 'foto') ? 'none' : 'table';
   duyuruFormuSifirla();
   etkinlikFormuSifirla();
+  kisiFormuSifirla();
   listeYukle();
 }
 
@@ -245,7 +537,16 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
-// ---- Duyuru form ----
+function resmiOku(inputEl, callback) {
+  const dosya = inputEl.files[0];
+  if (!dosya) { callback(null); return; }
+  const okuyucu = new FileReader();
+  okuyucu.onload = (e) => callback(e.target.result);
+  okuyucu.readAsDataURL(dosya);
+}
+
+// ==================== DUYURULAR ====================
+
 function duyuruFormuSifirla() {
   document.getElementById('duyuru-form').reset();
   document.getElementById('d-tarih').valueAsDate = new Date();
@@ -257,7 +558,7 @@ function duyuruFormuSifirla() {
 
 document.getElementById('duyuru-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const gövde = {
+  const govde = {
     baslik: document.getElementById('d-baslik').value.trim(),
     icerik: document.getElementById('d-icerik').value.trim(),
     tarih: document.getElementById('d-tarih').value,
@@ -265,12 +566,8 @@ document.getElementById('duyuru-form').addEventListener('submit', async (e) => {
   };
   const msg = document.getElementById('d-msg');
   try {
-    let res;
-    if (duzenlenenId) {
-      res = await fetch(`/api/duyurular/${duzenlenenId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
-    } else {
-      res = await fetch('/api/duyurular', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
-    }
+    const url = duzenlenenId ? `/api/duyurular/${duzenlenenId}` : '/api/duyurular';
+    const res = await apiFetch(url, { method: duzenlenenId ? 'PUT' : 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(govde) });
     if (!res.ok) throw new Error();
     msg.textContent = 'Kaydedildi.';
     msg.className = 'msg ok';
@@ -281,85 +578,6 @@ document.getElementById('duyuru-form').addEventListener('submit', async (e) => {
     msg.className = 'msg err';
   }
 });
-
-// ---- Etkinlik form ----
-function etkinlikFormuSifirla() {
-  document.getElementById('etkinlik-form').reset();
-  document.getElementById('e-tarih').valueAsDate = new Date();
-  document.getElementById('e-submit').textContent = 'Ekle';
-  document.getElementById('e-cancel').style.display = 'none';
-  document.getElementById('e-msg').textContent = '';
-  if (aktifSekme === 'etkinlik') duzenlenenId = null;
-}
-
-document.getElementById('etkinlik-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const gövde = {
-    baslik: document.getElementById('e-baslik').value.trim(),
-    aciklama: document.getElementById('e-aciklama').value.trim(),
-    tarih: document.getElementById('e-tarih').value,
-    yer: document.getElementById('e-yer').value.trim(),
-  };
-  const msg = document.getElementById('e-msg');
-  try {
-    let res;
-    if (duzenlenenId) {
-      res = await fetch(`/api/etkinlikler/${duzenlenenId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
-    } else {
-      res = await fetch('/api/etkinlikler', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
-    }
-    if (!res.ok) throw new Error();
-    msg.textContent = 'Kaydedildi.';
-    msg.className = 'msg ok';
-    etkinlikFormuSifirla();
-    listeYukle();
-  } catch (err) {
-    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
-    msg.className = 'msg err';
-  }
-});
-
-// ---- Liste ----
-async function listeYukle() {
-  const head = document.getElementById('tablo-head');
-  const govde = document.getElementById('tablo-govde');
-  if (aktifSekme === 'duyuru') {
-    head.innerHTML = '<tr><th>Başlık</th><th>Tarih</th><th></th><th></th></tr>';
-    const res = await fetch('/api/duyurular');
-    const veriler = await res.json();
-    if (veriler.length === 0) {
-      govde.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz duyuru yok.</td></tr>';
-      return;
-    }
-    govde.innerHTML = veriler.map(d => `
-      <tr>
-        <td>${escapeHtml(d.baslik)} ${d.onemli ? '<span class="badge-onemli">ÖNEMLİ</span>' : ''}</td>
-        <td>${d.tarih}</td>
-        <td class="actions"><button class="edit" onclick='duyuruDuzenle(${JSON.stringify(d)})'>Düzenle</button></td>
-        <td class="actions"><button class="del" onclick="duyuruSil(${d.id})">Sil</button></td>
-      </tr>
-    `).join('');
-  } else {
-    head.innerHTML = '<tr><th>Başlık</th><th>Tarih</th><th>Yer</th><th></th></tr>';
-    const res = await fetch('/api/etkinlikler');
-    const veriler = await res.json();
-    if (veriler.length === 0) {
-      govde.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz etkinlik yok.</td></tr>';
-      return;
-    }
-    govde.innerHTML = veriler.map(e => `
-      <tr>
-        <td>${escapeHtml(e.baslik)}</td>
-        <td>${e.tarih}</td>
-        <td>${escapeHtml(e.yer || '-')}</td>
-        <td class="actions">
-          <button class="edit" onclick='etkinlikDuzenle(${JSON.stringify(e)})'>Düzenle</button>
-          <button class="del" onclick="etkinlikSil(${e.id})">Sil</button>
-        </td>
-      </tr>
-    `).join('');
-  }
-}
 
 function duyuruDuzenle(d) {
   duzenlenenId = d.id;
@@ -374,9 +592,43 @@ function duyuruDuzenle(d) {
 
 async function duyuruSil(id) {
   if (!confirm('Bu duyuruyu silmek istediğinize emin misiniz?')) return;
-  await fetch(`/api/duyurular/${id}`, { method: 'DELETE' });
+  await apiFetch(`/api/duyurular/${id}`, { method: 'DELETE' });
   listeYukle();
 }
+
+// ==================== ETKİNLİKLER ====================
+
+function etkinlikFormuSifirla() {
+  document.getElementById('etkinlik-form').reset();
+  document.getElementById('e-tarih').valueAsDate = new Date();
+  document.getElementById('e-submit').textContent = 'Ekle';
+  document.getElementById('e-cancel').style.display = 'none';
+  document.getElementById('e-msg').textContent = '';
+  if (aktifSekme === 'etkinlik') duzenlenenId = null;
+}
+
+document.getElementById('etkinlik-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const govde = {
+    baslik: document.getElementById('e-baslik').value.trim(),
+    aciklama: document.getElementById('e-aciklama').value.trim(),
+    tarih: document.getElementById('e-tarih').value,
+    yer: document.getElementById('e-yer').value.trim(),
+  };
+  const msg = document.getElementById('e-msg');
+  try {
+    const url = duzenlenenId ? `/api/etkinlikler/${duzenlenenId}` : '/api/etkinlikler';
+    const res = await apiFetch(url, { method: duzenlenenId ? 'PUT' : 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(govde) });
+    if (!res.ok) throw new Error();
+    msg.textContent = 'Kaydedildi.';
+    msg.className = 'msg ok';
+    etkinlikFormuSifirla();
+    listeYukle();
+  } catch (err) {
+    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+    msg.className = 'msg err';
+  }
+});
 
 function etkinlikDuzenle(e) {
   duzenlenenId = e.id;
@@ -391,11 +643,402 @@ function etkinlikDuzenle(e) {
 
 async function etkinlikSil(id) {
   if (!confirm('Bu etkinliği silmek istediğinize emin misiniz?')) return;
-  await fetch(`/api/etkinlikler/${id}`, { method: 'DELETE' });
+  await apiFetch(`/api/etkinlikler/${id}`, { method: 'DELETE' });
   listeYukle();
 }
 
-listeYukle();
+// ==================== ÜYELER ====================
+
+async function bekleyenSayisiGuncelle() {
+  try {
+    const res = await apiFetch('/api/admin/uyeler');
+    const veriler = await res.json();
+    const bekleyen = veriler.filter(u => u.durum === 'bekliyor').length;
+    const rozet = document.getElementById('bekleyen-sayisi');
+    if (bekleyen > 0) {
+      rozet.textContent = bekleyen;
+      rozet.style.display = 'inline-block';
+    } else {
+      rozet.style.display = 'none';
+    }
+  } catch (err) { /* sessiz geç */ }
+}
+
+async function uyeOnayla(id) {
+  await apiFetch(`/api/admin/uyeler/${id}/onayla`, { method: 'POST' });
+  listeYukle();
+  bekleyenSayisiGuncelle();
+}
+
+async function uyeReddet(id) {
+  if (!confirm('Bu üyelik talebini reddetmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/admin/uyeler/${id}/reddet`, { method: 'POST' });
+  listeYukle();
+  bekleyenSayisiGuncelle();
+}
+
+async function uyeSil(id) {
+  if (!confirm('Bu üyeyi tamamen silmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/admin/uyeler/${id}`, { method: 'DELETE' });
+  listeYukle();
+  bekleyenSayisiGuncelle();
+}
+
+// ==================== FOTOĞRAFLAR ====================
+
+document.getElementById('f-dosya').addEventListener('change', () => {
+  resmiOku(document.getElementById('f-dosya'), (veri) => {
+    const img = document.getElementById('f-onizleme');
+    if (veri) { img.src = veri; img.style.display = 'block'; } else { img.style.display = 'none'; }
+  });
+});
+
+document.getElementById('foto-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('f-msg');
+  resmiOku(document.getElementById('f-dosya'), async (resim) => {
+    if (!resim) { msg.textContent = 'Lütfen bir fotoğraf seçin.'; msg.className = 'msg err'; return; }
+    try {
+      const res = await apiFetch('/api/fotograflar', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          baslik: document.getElementById('f-baslik').value.trim(),
+          aciklama: document.getElementById('f-aciklama').value.trim(),
+          resim,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      msg.textContent = 'Yüklendi.';
+      msg.className = 'msg ok';
+      document.getElementById('foto-form').reset();
+      document.getElementById('f-onizleme').style.display = 'none';
+      listeYukle();
+    } catch (err) {
+      msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+      msg.className = 'msg err';
+    }
+  });
+});
+
+async function fotoSil(id) {
+  if (!confirm('Bu fotoğrafı silmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/fotograflar/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+// ==================== KİŞİLER (Rahmetli / Yaşlı) ====================
+
+document.getElementById('k-tur').addEventListener('change', () => {
+  const tur = document.getElementById('k-tur').value;
+  document.getElementById('k-vefat-label').textContent = tur === 'rahmetli' ? 'Vefat Yılı (opsiyonel)' : 'Vefat Yılı (boş bırakın)';
+});
+
+document.getElementById('k-dosya').addEventListener('change', () => {
+  resmiOku(document.getElementById('k-dosya'), (veri) => {
+    const img = document.getElementById('k-onizleme');
+    if (veri) { img.src = veri; img.style.display = 'block'; } else { img.style.display = 'none'; }
+  });
+});
+
+function kisiFormuSifirla() {
+  document.getElementById('kisi-form').reset();
+  document.getElementById('k-onizleme').style.display = 'none';
+  document.getElementById('k-submit').textContent = 'Ekle';
+  document.getElementById('k-cancel').style.display = 'none';
+  document.getElementById('k-form-baslik').textContent = 'Yeni Kişi Ekle';
+  document.getElementById('k-msg').textContent = '';
+  if (aktifSekme === 'kisi') duzenlenenId = null;
+}
+
+document.getElementById('kisi-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('k-msg');
+  resmiOku(document.getElementById('k-dosya'), async (resim) => {
+    const govde = {
+      ad_soyad: document.getElementById('k-ad').value.trim(),
+      tur: document.getElementById('k-tur').value,
+      dogum_yili: document.getElementById('k-dogum').value.trim(),
+      vefat_yili: document.getElementById('k-vefat').value.trim(),
+      aciklama: document.getElementById('k-aciklama').value.trim(),
+    };
+    if (resim) govde.resim = resim;
+    try {
+      const url = duzenlenenId ? `/api/kisiler/${duzenlenenId}` : '/api/kisiler';
+      const res = await apiFetch(url, { method: duzenlenenId ? 'PUT' : 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(govde) });
+      if (!res.ok) throw new Error();
+      msg.textContent = 'Kaydedildi.';
+      msg.className = 'msg ok';
+      kisiFormuSifirla();
+      listeYukle();
+    } catch (err) {
+      msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+      msg.className = 'msg err';
+    }
+  });
+});
+
+function kisiDuzenle(k) {
+  duzenlenenId = k.id;
+  document.getElementById('k-ad').value = k.ad_soyad;
+  document.getElementById('k-tur').value = k.tur;
+  document.getElementById('k-dogum').value = k.dogum_yili || '';
+  document.getElementById('k-vefat').value = k.vefat_yili || '';
+  document.getElementById('k-aciklama').value = k.aciklama || '';
+  document.getElementById('k-onizleme').style.display = 'none';
+  document.getElementById('k-submit').textContent = 'Güncelle';
+  document.getElementById('k-cancel').style.display = 'block';
+  document.getElementById('k-form-baslik').textContent = 'Kişiyi Düzenle';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+async function kisiSil(id) {
+  if (!confirm('Bu kişiyi silmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/kisiler/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+// ==================== DERNEK: DESTEKÇİLER ====================
+
+document.getElementById('destekci-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('ds-msg');
+  try {
+    const res = await apiFetch('/api/destekciler', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        ad_soyad: document.getElementById('ds-ad').value.trim(),
+        aciklama: document.getElementById('ds-aciklama').value.trim(),
+        tarih: document.getElementById('ds-tarih').value,
+      }),
+    });
+    if (!res.ok) throw new Error();
+    msg.textContent = 'Kaydedildi.';
+    msg.className = 'msg ok';
+    document.getElementById('destekci-form').reset();
+    document.getElementById('ds-tarih').valueAsDate = new Date();
+    listeYukle();
+  } catch (err) {
+    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+    msg.className = 'msg err';
+  }
+});
+
+async function destekciSil(id) {
+  if (!confirm('Bu destekçiyi silmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/destekciler/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+// ==================== DERNEK: HARCAMALAR ====================
+
+document.getElementById('harcama-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('h-msg');
+  try {
+    const res = await apiFetch('/api/harcamalar', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        baslik: document.getElementById('h-baslik').value.trim(),
+        aciklama: document.getElementById('h-aciklama').value.trim(),
+        tutar: document.getElementById('h-tutar').value,
+        tarih: document.getElementById('h-tarih').value,
+      }),
+    });
+    if (!res.ok) throw new Error();
+    msg.textContent = 'Kaydedildi.';
+    msg.className = 'msg ok';
+    document.getElementById('harcama-form').reset();
+    document.getElementById('h-tarih').valueAsDate = new Date();
+    listeYukle();
+  } catch (err) {
+    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+    msg.className = 'msg err';
+  }
+});
+
+async function harcamaSil(id) {
+  if (!confirm('Bu harcamayı silmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/harcamalar/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+// ==================== VİDEOLAR ====================
+
+document.getElementById('video-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('v-msg');
+  try {
+    const res = await apiFetch('/api/videolar', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        baslik: document.getElementById('v-baslik').value.trim(),
+        aciklama: document.getElementById('v-aciklama').value.trim(),
+        url: document.getElementById('v-url').value.trim(),
+        tarih: document.getElementById('v-tarih').value,
+      }),
+    });
+    if (!res.ok) throw new Error();
+    msg.textContent = 'Kaydedildi.';
+    msg.className = 'msg ok';
+    document.getElementById('video-form').reset();
+    document.getElementById('v-tarih').valueAsDate = new Date();
+    listeYukle();
+  } catch (err) {
+    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+    msg.className = 'msg err';
+  }
+});
+
+async function videoSil(id) {
+  if (!confirm('Bu video linkini silmek istediğinize emin misiniz?')) return;
+  await apiFetch(`/api/videolar/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+// ==================== LİSTE YÜKLEME ====================
+
+async function listeYukle() {
+  if (!ADMIN_SIFRE) return;
+  const head = document.getElementById('tablo-head');
+  const govde = document.getElementById('tablo-govde');
+  const icerik = document.getElementById('liste-icerik');
+
+  try {
+    if (aktifSekme === 'duyuru') {
+      icerik.innerHTML = '<table id="liste-tablo"><thead id="tablo-head"></thead><tbody id="tablo-govde"></tbody></table>';
+      document.getElementById('tablo-head').innerHTML = '<tr><th>Başlık</th><th>Tarih</th><th></th><th></th></tr>';
+      const res = await apiFetch('/api/duyurular');
+      const veriler = await res.json();
+      const tbody = document.getElementById('tablo-govde');
+      if (veriler.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz duyuru yok.</td></tr>'; return; }
+      tbody.innerHTML = veriler.map(d => `
+        <tr>
+          <td>${escapeHtml(d.baslik)} ${d.onemli ? '<span class="badge-onemli">ÖNEMLİ</span>' : ''}</td>
+          <td>${d.tarih}</td>
+          <td class="actions"><button class="edit" onclick='duyuruDuzenle(${JSON.stringify(d)})'>Düzenle</button></td>
+          <td class="actions"><button class="del" onclick="duyuruSil(${d.id})">Sil</button></td>
+        </tr>`).join('');
+
+    } else if (aktifSekme === 'etkinlik') {
+      icerik.innerHTML = '<table id="liste-tablo"><thead id="tablo-head"></thead><tbody id="tablo-govde"></tbody></table>';
+      document.getElementById('tablo-head').innerHTML = '<tr><th>Başlık</th><th>Tarih</th><th>Yer</th><th></th></tr>';
+      const res = await apiFetch('/api/etkinlikler');
+      const veriler = await res.json();
+      const tbody = document.getElementById('tablo-govde');
+      if (veriler.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz etkinlik yok.</td></tr>'; return; }
+      tbody.innerHTML = veriler.map(e => `
+        <tr>
+          <td>${escapeHtml(e.baslik)}</td>
+          <td>${e.tarih}</td>
+          <td>${escapeHtml(e.yer || '-')}</td>
+          <td class="actions">
+            <button class="edit" onclick='etkinlikDuzenle(${JSON.stringify(e)})'>Düzenle</button>
+            <button class="del" onclick="etkinlikSil(${e.id})">Sil</button>
+          </td>
+        </tr>`).join('');
+
+    } else if (aktifSekme === 'uye') {
+      icerik.innerHTML = '<table id="liste-tablo"><thead id="tablo-head"></thead><tbody id="tablo-govde"></tbody></table>';
+      document.getElementById('tablo-head').innerHTML = '<tr><th>Ad Soyad</th><th>İletişim</th><th>Durum</th><th>Kayıt Tarihi</th><th></th></tr>';
+      const res = await apiFetch('/api/admin/uyeler');
+      const veriler = await res.json();
+      const tbody = document.getElementById('tablo-govde');
+      if (veriler.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Henüz üyelik talebi yok.</td></tr>'; return; }
+      tbody.innerHTML = veriler.map(u => `
+        <tr>
+          <td>${escapeHtml(u.ad_soyad)}</td>
+          <td>${escapeHtml(u.email || u.telefon || '-')}</td>
+          <td><span class="badge-${u.durum}">${u.durum === 'bekliyor' ? 'BEKLİYOR' : (u.durum === 'onaylandi' ? 'ONAYLANDI' : 'REDDEDİLDİ')}</span></td>
+          <td>${u.olusturma_tarihi || '-'}</td>
+          <td class="actions">
+            ${u.durum !== 'onaylandi' ? `<button class="onay" onclick="uyeOnayla(${u.id})">Onayla</button>` : ''}
+            ${u.durum !== 'reddedildi' ? `<button class="red" onclick="uyeReddet(${u.id})">Reddet</button>` : ''}
+            <button class="del" onclick="uyeSil(${u.id})">Sil</button>
+          </td>
+        </tr>`).join('');
+      bekleyenSayisiGuncelle();
+
+    } else if (aktifSekme === 'foto') {
+      const res = await apiFetch('/api/fotograflar');
+      const veriler = await res.json();
+      if (veriler.length === 0) { icerik.innerHTML = '<p style="color:var(--muted); font-size:13.5px;">Henüz fotoğraf yok.</p>'; return; }
+      icerik.innerHTML = '<div class="foto-grid">' + veriler.map(f => `
+        <div class="foto-kutu">
+          <img src="${f.resim}" alt="${escapeHtml(f.baslik || '')}">
+          <div class="foto-alt">
+            <b>${escapeHtml(f.baslik || 'Başlıksız')}</b>
+            ${f.tarih}
+            <button class="secondary" onclick="fotoSil(${f.id})" style="color:var(--danger);">Sil</button>
+          </div>
+        </div>`).join('') + '</div>';
+
+    } else if (aktifSekme === 'kisi') {
+      icerik.innerHTML = '<table id="liste-tablo"><thead id="tablo-head"></thead><tbody id="tablo-govde"></tbody></table>';
+      document.getElementById('tablo-head').innerHTML = '<tr><th>Ad Soyad</th><th>Tür</th><th>Yıllar</th><th></th><th></th></tr>';
+      const res = await apiFetch('/api/kisiler');
+      const veriler = await res.json();
+      const tbody = document.getElementById('tablo-govde');
+      if (veriler.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Henüz kişi eklenmedi.</td></tr>'; return; }
+      tbody.innerHTML = veriler.map(k => `
+        <tr>
+          <td>${escapeHtml(k.ad_soyad)}</td>
+          <td><span class="badge-${k.tur}">${k.tur === 'rahmetli' ? 'RAHMETLİ' : 'YAŞLIMIZ'}</span></td>
+          <td>${escapeHtml(k.dogum_yili || '-')}${k.tur === 'rahmetli' ? ' - ' + escapeHtml(k.vefat_yili || '-') : ''}</td>
+          <td class="actions"><button class="edit" onclick='kisiDuzenle(${JSON.stringify(k)})'>Düzenle</button></td>
+          <td class="actions"><button class="del" onclick="kisiSil(${k.id})">Sil</button></td>
+        </tr>`).join('');
+
+    } else if (aktifSekme === 'dernek') {
+      const [destekRes, harcamaRes] = await Promise.all([apiFetch('/api/destekciler'), apiFetch('/api/harcamalar')]);
+      const destekciler = await destekRes.json();
+      const harcamalar = await harcamaRes.json();
+      const toplamHarcama = harcamalar.reduce((t, h) => t + parseFloat(h.tutar || 0), 0);
+      let html = '<h3 style="margin-top:0; border-top:none; padding-top:0;">Destekçiler</h3>';
+      if (destekciler.length === 0) {
+        html += '<p style="color:var(--muted); font-size:13px;">Henüz destekçi yok.</p>';
+      } else {
+        html += destekciler.map(d => `
+          <div class="ozet-satir">
+            <span><b>${escapeHtml(d.ad_soyad)}</b>${d.aciklama ? ' — ' + escapeHtml(d.aciklama) : ''}<br><span style="color:var(--muted); font-size:11.5px;">${d.tarih}</span></span>
+            <button class="secondary" style="width:auto; margin:0; color:var(--danger);" onclick="destekciSil(${d.id})">Sil</button>
+          </div>`).join('');
+      }
+      html += '<h3>Harcamalar</h3>';
+      if (harcamalar.length === 0) {
+        html += '<p style="color:var(--muted); font-size:13px;">Henüz harcama yok.</p>';
+      } else {
+        html += harcamalar.map(h => `
+          <div class="ozet-satir">
+            <span><b>${escapeHtml(h.baslik)}</b>${h.aciklama ? ' — ' + escapeHtml(h.aciklama) : ''}<br><span style="color:var(--muted); font-size:11.5px;">${h.tarih}</span></span>
+            <span>${parseFloat(h.tutar).toLocaleString('tr-TR', {minimumFractionDigits:2})} TL
+              <button class="secondary" style="width:auto; margin:0; color:var(--danger);" onclick="harcamaSil(${h.id})">Sil</button>
+            </span>
+          </div>`).join('');
+        html += `<div class="ozet-toplam"><span>Toplam Harcama</span><span>${toplamHarcama.toLocaleString('tr-TR', {minimumFractionDigits:2})} TL</span></div>`;
+      }
+      icerik.innerHTML = html;
+
+    } else if (aktifSekme === 'video') {
+      icerik.innerHTML = '<table id="liste-tablo"><thead id="tablo-head"></thead><tbody id="tablo-govde"></tbody></table>';
+      document.getElementById('tablo-head').innerHTML = '<tr><th>Başlık</th><th>Link</th><th>Tarih</th><th></th></tr>';
+      const res = await apiFetch('/api/videolar');
+      const veriler = await res.json();
+      const tbody = document.getElementById('tablo-govde');
+      if (veriler.length === 0) { tbody.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz video linki yok.</td></tr>'; return; }
+      tbody.innerHTML = veriler.map(v => `
+        <tr>
+          <td>${escapeHtml(v.baslik)}</td>
+          <td><a href="${v.url}" target="_blank" rel="noopener">${v.url.length > 34 ? v.url.slice(0,34)+'…' : v.url}</a></td>
+          <td>${v.tarih}</td>
+          <td class="actions"><button class="del" onclick="videoSil(${v.id})">Sil</button></td>
+        </tr>`).join('');
+    }
+  } catch (err) {
+    if (err.message !== 'Yetkisiz') {
+      icerik.innerHTML = '<p style="color:var(--danger); font-size:13px;">Bir hata oluştu, sayfayı yenileyin.</p>';
+    }
+  }
+}
 </script>
 </body>
 </html>
