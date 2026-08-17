@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Köyümüz - Yönetim Paneli</title>
+<style>
+  :root {
+    --bg: #f4f6f3;
+    --card: #ffffff;
+    --primary: #2f6b4f;
+    --primary-dark: #234f3a;
+    --accent: #d98e3b;
+    --text: #23291f;
+    --muted: #6b7268;
+    --border: #e4e8e0;
+    --danger: #c0473a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 22px 32px;
+  }
+  header h1 { margin: 0; font-size: 20px; }
+  header p { margin: 4px 0 0; opacity: 0.85; font-size: 13px; }
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .tab {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 800px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .panel h2 {
+    margin: 0 0 14px;
+    font-size: 15px;
+  }
+  label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    margin: 12px 0 5px;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fafbf9;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .checkbox-row input { width: auto; }
+  button.primary {
+    margin-top: 18px;
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 9px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  button.primary:hover { background: var(--primary-dark); }
+  button.secondary {
+    margin-top: 8px;
+    width: 100%;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    vertical-align: top;
+  }
+  th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  td.actions { white-space: nowrap; text-align: right; }
+  td.actions button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  td.actions button.edit { color: var(--primary-dark); }
+  td.actions button.del { color: var(--danger); }
+  td.actions button:hover { background: var(--bg); }
+  .badge-onemli {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--accent);
+    background: #fbeedd;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .empty-row td { text-align: center; color: var(--muted); padding: 24px; }
+  .msg { font-size: 12.5px; margin-top: 8px; min-height: 16px; }
+  .msg.err { color: var(--danger); }
+  .msg.ok { color: var(--primary-dark); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🏡 Köyümüz — Yönetim Paneli</h1>
+  <p>Duyuru ve etkinlikleri buradan ekleyip düzenleyebilirsiniz</p>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button class="tab active" id="tab-duyuru" onclick="sekmeDegistir('duyuru')">📢 Duyurular</button>
+    <button class="tab" id="tab-etkinlik" onclick="sekmeDegistir('etkinlik')">📅 Etkinlikler</button>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2 id="form-baslik">Yeni Duyuru Ekle</h2>
+      <form id="duyuru-form">
+        <label>Başlık</label>
+        <input type="text" id="d-baslik" required>
+        <label>İçerik</label>
+        <textarea id="d-icerik" required></textarea>
+        <label>Tarih</label>
+        <input type="date" id="d-tarih" required>
+        <div class="checkbox-row">
+          <input type="checkbox" id="d-onemli">
+          <label style="margin:0;">Önemli olarak işaretle</label>
+        </div>
+        <button type="submit" class="primary" id="d-submit">Ekle</button>
+        <button type="button" class="secondary" id="d-cancel" style="display:none;" onclick="duyuruFormuSifirla()">Vazgeç</button>
+        <div class="msg" id="d-msg"></div>
+      </form>
+
+      <form id="etkinlik-form" style="display:none;">
+        <label>Başlık</label>
+        <input type="text" id="e-baslik" required>
+        <label>Açıklama</label>
+        <textarea id="e-aciklama" required></textarea>
+        <label>Tarih</label>
+        <input type="date" id="e-tarih" required>
+        <label>Yer (opsiyonel)</label>
+        <input type="text" id="e-yer">
+        <button type="submit" class="primary" id="e-submit">Ekle</button>
+        <button type="button" class="secondary" id="e-cancel" style="display:none;" onclick="etkinlikFormuSifirla()">Vazgeç</button>
+        <div class="msg" id="e-msg"></div>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h2 id="liste-baslik">Duyuru Listesi</h2>
+      <table>
+        <thead id="tablo-head"></thead>
+        <tbody id="tablo-govde">
+          <tr class="empty-row"><td colspan="4">Yükleniyor...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let aktifSekme = 'duyuru';
+let duzenlenenId = null;
+
+document.getElementById('d-tarih').valueAsDate = new Date();
+document.getElementById('e-tarih').valueAsDate = new Date();
+
+function sekmeDegistir(sekme) {
+  aktifSekme = sekme;
+  duzenlenenId = null;
+  document.getElementById('tab-duyuru').classList.toggle('active', sekme === 'duyuru');
+  document.getElementById('tab-etkinlik').classList.toggle('active', sekme === 'etkinlik');
+  document.getElementById('duyuru-form').style.display = sekme === 'duyuru' ? 'block' : 'none';
+  document.getElementById('etkinlik-form').style.display = sekme === 'etkinlik' ? 'block' : 'none';
+  document.getElementById('form-baslik').textContent = sekme === 'duyuru' ? 'Yeni Duyuru Ekle' : 'Yeni Etkinlik Ekle';
+  document.getElementById('liste-baslik').textContent = sekme === 'duyuru' ? 'Duyuru Listesi' : 'Etkinlik Listesi';
+  duyuruFormuSifirla();
+  etkinlikFormuSifirla();
+  listeYukle();
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str ?? '';
+  return d.innerHTML;
+}
+
+// ---- Duyuru form ----
+function duyuruFormuSifirla() {
+  document.getElementById('duyuru-form').reset();
+  document.getElementById('d-tarih').valueAsDate = new Date();
+  document.getElementById('d-submit').textContent = 'Ekle';
+  document.getElementById('d-cancel').style.display = 'none';
+  document.getElementById('d-msg').textContent = '';
+  if (aktifSekme === 'duyuru') duzenlenenId = null;
+}
+
+document.getElementById('duyuru-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const gövde = {
+    baslik: document.getElementById('d-baslik').value.trim(),
+    icerik: document.getElementById('d-icerik').value.trim(),
+    tarih: document.getElementById('d-tarih').value,
+    onemli: document.getElementById('d-onemli').checked,
+  };
+  const msg = document.getElementById('d-msg');
+  try {
+    let res;
+    if (duzenlenenId) {
+      res = await fetch(`/api/duyurular/${duzenlenenId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
+    } else {
+      res = await fetch('/api/duyurular', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
+    }
+    if (!res.ok) throw new Error();
+    msg.textContent = 'Kaydedildi.';
+    msg.className = 'msg ok';
+    duyuruFormuSifirla();
+    listeYukle();
+  } catch (err) {
+    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+    msg.className = 'msg err';
+  }
+});
+
+// ---- Etkinlik form ----
+function etkinlikFormuSifirla() {
+  document.getElementById('etkinlik-form').reset();
+  document.getElementById('e-tarih').valueAsDate = new Date();
+  document.getElementById('e-submit').textContent = 'Ekle';
+  document.getElementById('e-cancel').style.display = 'none';
+  document.getElementById('e-msg').textContent = '';
+  if (aktifSekme === 'etkinlik') duzenlenenId = null;
+}
+
+document.getElementById('etkinlik-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const gövde = {
+    baslik: document.getElementById('e-baslik').value.trim(),
+    aciklama: document.getElementById('e-aciklama').value.trim(),
+    tarih: document.getElementById('e-tarih').value,
+    yer: document.getElementById('e-yer').value.trim(),
+  };
+  const msg = document.getElementById('e-msg');
+  try {
+    let res;
+    if (duzenlenenId) {
+      res = await fetch(`/api/etkinlikler/${duzenlenenId}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
+    } else {
+      res = await fetch('/api/etkinlikler', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(gövde) });
+    }
+    if (!res.ok) throw new Error();
+    msg.textContent = 'Kaydedildi.';
+    msg.className = 'msg ok';
+    etkinlikFormuSifirla();
+    listeYukle();
+  } catch (err) {
+    msg.textContent = 'Bir hata oluştu, tekrar deneyin.';
+    msg.className = 'msg err';
+  }
+});
+
+// ---- Liste ----
+async function listeYukle() {
+  const head = document.getElementById('tablo-head');
+  const govde = document.getElementById('tablo-govde');
+  if (aktifSekme === 'duyuru') {
+    head.innerHTML = '<tr><th>Başlık</th><th>Tarih</th><th></th><th></th></tr>';
+    const res = await fetch('/api/duyurular');
+    const veriler = await res.json();
+    if (veriler.length === 0) {
+      govde.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz duyuru yok.</td></tr>';
+      return;
+    }
+    govde.innerHTML = veriler.map(d => `
+      <tr>
+        <td>${escapeHtml(d.baslik)} ${d.onemli ? '<span class="badge-onemli">ÖNEMLİ</span>' : ''}</td>
+        <td>${d.tarih}</td>
+        <td class="actions"><button class="edit" onclick='duyuruDuzenle(${JSON.stringify(d)})'>Düzenle</button></td>
+        <td class="actions"><button class="del" onclick="duyuruSil(${d.id})">Sil</button></td>
+      </tr>
+    `).join('');
+  } else {
+    head.innerHTML = '<tr><th>Başlık</th><th>Tarih</th><th>Yer</th><th></th></tr>';
+    const res = await fetch('/api/etkinlikler');
+    const veriler = await res.json();
+    if (veriler.length === 0) {
+      govde.innerHTML = '<tr class="empty-row"><td colspan="4">Henüz etkinlik yok.</td></tr>';
+      return;
+    }
+    govde.innerHTML = veriler.map(e => `
+      <tr>
+        <td>${escapeHtml(e.baslik)}</td>
+        <td>${e.tarih}</td>
+        <td>${escapeHtml(e.yer || '-')}</td>
+        <td class="actions">
+          <button class="edit" onclick='etkinlikDuzenle(${JSON.stringify(e)})'>Düzenle</button>
+          <button class="del" onclick="etkinlikSil(${e.id})">Sil</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+}
+
+function duyuruDuzenle(d) {
+  duzenlenenId = d.id;
+  document.getElementById('d-baslik').value = d.baslik;
+  document.getElementById('d-icerik').value = d.icerik;
+  document.getElementById('d-tarih').value = d.tarih;
+  document.getElementById('d-onemli').checked = !!d.onemli;
+  document.getElementById('d-submit').textContent = 'Güncelle';
+  document.getElementById('d-cancel').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+async function duyuruSil(id) {
+  if (!confirm('Bu duyuruyu silmek istediğinize emin misiniz?')) return;
+  await fetch(`/api/duyurular/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+function etkinlikDuzenle(e) {
+  duzenlenenId = e.id;
+  document.getElementById('e-baslik').value = e.baslik;
+  document.getElementById('e-aciklama').value = e.aciklama;
+  document.getElementById('e-tarih').value = e.tarih;
+  document.getElementById('e-yer').value = e.yer || '';
+  document.getElementById('e-submit').textContent = 'Güncelle';
+  document.getElementById('e-cancel').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+async function etkinlikSil(id) {
+  if (!confirm('Bu etkinliği silmek istediğinize emin misiniz?')) return;
+  await fetch(`/api/etkinlikler/${id}`, { method: 'DELETE' });
+  listeYukle();
+}
+
+listeYukle();
+</script>
+</body>
+</html>
